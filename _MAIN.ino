@@ -14,16 +14,14 @@
 
 
 const int onBoardLedPin = 13;
-
+const int bpmPotPin = 2;
+const int inputSwitchPin = 44;
 
 int inputMode = 0;
-const int inputSwitchPin = 44;
 Switch inputModeSwitch = Switch(inputSwitchPin);
 
-const int bpmPotPin = 2;
-
-const int neoPixelPin = 40;
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(40, neoPixelPin, NEO_GRB + NEO_KHZ800);
+// const int neoPixelPin = 40;
+// Adafruit_NeoPixel strip = Adafruit_NeoPixel(40, neoPixelPin, NEO_GRB + NEO_KHZ800);
 
 Adafruit_PWMServoDriver pwmDriver = Adafruit_PWMServoDriver();
 
@@ -50,18 +48,24 @@ Dancer *dancers[] = {
 };
 
 void setup() {
+  // Get serial going and make it go as fast as it can.
   Serial.begin(115200);
+
+  // Get some noise to seed the random number generator with.
   randomSeed(analogRead(4) * analogRead(5) * analogRead(6) * analogRead(7));
 
-  // strip.begin();
-  // strip.show();
-
+  // Initialize the PWM driver board that all servos are connected to.
   pwmDriver.begin();
   pwmDriver.setPWMFreq(60);
 
-  pinMode(onBoardLedPin, OUTPUT);
-  // pinMode(inputSwitchPin, INPUT);
+  // // Initialize the NeoPixel matrix.
+  // strip.begin();
+  // strip.show();
 
+  // Set the onboard LED to output mode.
+  pinMode(onBoardLedPin, OUTPUT);
+
+  // Initialize all the joints.
   FL1.init(pwmDriver, 0,  10,  1, 30);
   FL2.init(pwmDriver, 1,   6, -1, 80);
   FR1.init(pwmDriver, 2, -10, -1, 30);
@@ -71,13 +75,16 @@ void setup() {
   BL1.init(pwmDriver, 6,   3, -1, 30);
   BL2.init(pwmDriver, 7,  -4,  1, 80);
 
+  // Initializers all the dancers, giving them all a reference to each joint.
   for (int i = 0; i < dancerCount; i++) {
     dancers[i]->init(FL1, FL2, FR1, FR2, BR1, BR2, BL1, BL2);
   }
 
+  // Set the first dancer randomly.
   currentDancer = dancers[random(0, dancerCount)];
   currentDancer->start();
 
+  // start ticking the internal metronome at 90 bpm.
   metronome.start(90);
 }
 
@@ -86,10 +93,9 @@ void loop() {
 
   changeInputMode();
 
-  // sinePixels();
-  digitalWrite(onBoardLedPin, inputMode == 0 ? LOW : HIGH);
-
   updateJoints();
+
+  // sinePixels();
 }
 
 void changeInputMode() {
@@ -110,6 +116,8 @@ void changeInputMode() {
       BR2.tween(BR2.initialAngle, 0.25);
     }
   }
+
+  digitalWrite(onBoardLedPin, inputMode == 0 ? LOW : HIGH);
 }
 
 void updateJoints() {
