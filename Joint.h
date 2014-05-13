@@ -26,6 +26,7 @@ class Joint {
     float offset;
     float direction;
     float currentAngle;
+    float initialAngle;
     Servo servo;
 
     // tweening

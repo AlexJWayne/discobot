@@ -3,12 +3,13 @@
 const int SERVOMIN = 160;
 const int SERVOMAX = 590;
 
-void Joint::init(Adafruit_PWMServoDriver& _pwmDriver, int _pin, float _offset, float _direction, float initialAngle) {
+void Joint::init(Adafruit_PWMServoDriver& _pwmDriver, int _pin, float _offset, float _direction, float _initialAngle) {
   pwmDriver = &_pwmDriver;
 
   pin = _pin;
   offset = _offset;
   direction = _direction;
+  initialAngle = _initialAngle;
   currentTime = 0.1;
   servo.attach(pin);
 

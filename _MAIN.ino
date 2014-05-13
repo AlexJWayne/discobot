@@ -1,3 +1,8 @@
+#include "Adafruit_NeoPixel.h"
+#include "Adafruit_PWMServoDriver.h"
+
+#include "Switch.h"
+
 #include "ReadSerialFloat.h"
 #include "Joint.h"
 #include "Dancer.h"
@@ -7,14 +12,13 @@
 #include "DancerHandup.h"
 #include "DancerThrusts.h"
 
-#include "Adafruit_NeoPixel.h"
-#include "Adafruit_PWMServoDriver.h"
 
 const int onBoardLedPin = 13;
 
-const int inputSwitchPin = 44;
-bool switchPressed = false;
+
 int inputMode = 0;
+const int inputSwitchPin = 44;
+Switch inputModeSwitch = Switch(inputSwitchPin);
 
 const int bpmPotPin = 2;
 
@@ -22,6 +26,8 @@ const int neoPixelPin = 40;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(40, neoPixelPin, NEO_GRB + NEO_KHZ800);
 
 Adafruit_PWMServoDriver pwmDriver = Adafruit_PWMServoDriver();
+
+float currentTime;
 
 Joint FL1;
 Joint FL2;
@@ -54,7 +60,7 @@ void setup() {
   pwmDriver.setPWMFreq(60);
 
   pinMode(onBoardLedPin, OUTPUT);
-  pinMode(inputSwitchPin, INPUT);
+  // pinMode(inputSwitchPin, INPUT);
 
   FL1.init(pwmDriver, 0,  10,  1, 30);
   FL2.init(pwmDriver, 1,   6, -1, 80);
@@ -75,29 +81,38 @@ void setup() {
   metronome.start(90);
 }
 
-// unsigned long us;
-
 void loop() {
-  float currentTime = (float)millis() / 1000.0;
+  currentTime = (float)millis() / 1000.0;
+
+  changeInputMode();
 
   // sinePixels();
-
   digitalWrite(onBoardLedPin, inputMode == 0 ? LOW : HIGH);
-  
-  if (!switchPressed && digitalRead(inputSwitchPin) == HIGH) {
-    switchPressed = true;
+
+  updateJoints();
+}
+
+void changeInputMode() {
+  inputModeSwitch.poll();
+  if (inputModeSwitch.pushed()) {
     if (inputMode == 0) {
       inputMode = 1;
     } else {
       inputMode = 0;
+
+      FL1.tween(FL1.initialAngle, 0.25);
+      FR1.tween(FR1.initialAngle, 0.25);
+      BL1.tween(BL1.initialAngle, 0.25);
+      BR1.tween(BR1.initialAngle, 0.25);
+      FL2.tween(FL2.initialAngle, 0.25);
+      FR2.tween(FR2.initialAngle, 0.25);
+      BL2.tween(BL2.initialAngle, 0.25);
+      BR2.tween(BR2.initialAngle, 0.25);
     }
-  } else if (digitalRead(inputSwitchPin) == LOW) {
-    switchPressed = false;
   }
+}
 
-  float bpmScalar = (float)analogRead(bpmPotPin) / 1023;
-  metronome.setBPM(60.0 + 180.0 * bpmScalar);
-
+void updateJoints() {
   switch (inputMode) {
     case 0:
       updateSerial(); break;
@@ -119,25 +134,25 @@ void updateSerial() {
   while (Serial.available() > 0) {
     float duration;
     // segment
-    readFloat();
+    readSerialFloat();
 
     // tatum
-    readFloat();
+    readSerialFloat();
     
     // beat
-    duration = readFloat();
+    duration = readSerialFloat();
     if (duration > 0) {
       currentDancer->onBeatStart(duration);
     }
 
     // bar
-    duration = readFloat();
+    duration = readSerialFloat();
     if (duration > 0) {
       currentDancer->onBarStart(duration);
     }
 
     // section
-    duration = readFloat();
+    duration = readSerialFloat();
     if (duration > 0) {
       currentDancer = dancers[random(0, dancerCount)];
       currentDancer->start();
@@ -148,7 +163,15 @@ void updateSerial() {
 }
 
 void updateMetronome() {
+
+  // Set BPM to pot value
+  float bpmScalar = (float)analogRead(bpmPotPin) / 1023;
+  metronome.setBPM(60.0 + 180.0 * bpmScalar);
+
+  // update the metronome timer
   metronome.update();
+
+  // Update dancers
 
   if (metronome.triggerSection()) {
     currentDancer = dancers[random(0, dancerCount)];
@@ -168,28 +191,6 @@ void updateMetronome() {
     currentDancer->onBarStart(metronome.spb * 4.0);
   }
 }
-
-float readFloat() {
-  // Allows us to read bytes as a float
-  union {
-    char chars[4];
-    float floatResult;
-  } converter;
-
-  // Buffer that store the bytes
-  char buffer[4];
-
-  // Read into the buffer
-  Serial.readBytes(buffer, 4);
-
-  // Map the buffer bytes into the converter
-  for (int i = 0; i < 4; i++) {
-    converter.chars[i] = buffer[i];
-  }
-
-  // Snag the result as a float
-  return converter.floatResult;
-}                                                                                                                                                                                
 
 // void sinePixels() {
 //   float brightness = .5;
