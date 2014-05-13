@@ -1,4 +1,4 @@
-#include "SerialFloatReader.h"
+#include "ReadSerialFloat.h"
 #include "Joint.h"
 #include "Dancer.h"
 
@@ -100,9 +100,9 @@ void loop() {
 
   switch (inputMode) {
     case 0:
-      updateViaSerial(); break;
+      updateSerial(); break;
     case 1:
-      updateViaMetronome(); break;
+      updateMetronome(); break;
   }
 
   FL1.update(currentTime);
@@ -115,29 +115,29 @@ void loop() {
   BR2.update(currentTime);
 }
 
-void updateViaSerial() {
+void updateSerial() {
   while (Serial.available() > 0) {
     float duration;
     // segment
-    readSerialFloat();
+    readFloat();
 
     // tatum
-    readSerialFloat();
+    readFloat();
     
     // beat
-    duration = readSerialFloat();
+    duration = readFloat();
     if (duration > 0) {
       currentDancer->onBeatStart(duration);
     }
 
     // bar
-    duration = readSerialFloat();
+    duration = readFloat();
     if (duration > 0) {
       currentDancer->onBarStart(duration);
     }
 
     // section
-    duration = readSerialFloat();
+    duration = readFloat();
     if (duration > 0) {
       currentDancer = dancers[random(0, dancerCount)];
       currentDancer->start();
@@ -147,7 +147,7 @@ void updateViaSerial() {
   }
 }
 
-void updateViaMetronome() {
+void updateMetronome() {
   metronome.update();
 
   if (metronome.triggerSection()) {
@@ -167,7 +167,29 @@ void updateViaMetronome() {
     // Serial.println("bar ");
     currentDancer->onBarStart(metronome.spb * 4.0);
   }
-}                                                                                                                                   
+}
+
+float readFloat() {
+  // Allows us to read bytes as a float
+  union {
+    char chars[4];
+    float floatResult;
+  } converter;
+
+  // Buffer that store the bytes
+  char buffer[4];
+
+  // Read into the buffer
+  Serial.readBytes(buffer, 4);
+
+  // Map the buffer bytes into the converter
+  for (int i = 0; i < 4; i++) {
+    converter.chars[i] = buffer[i];
+  }
+
+  // Snag the result as a float
+  return converter.floatResult;
+}                                                                                                                                                                                
 
 // void sinePixels() {
 //   float brightness = .5;
