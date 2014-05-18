@@ -6,7 +6,10 @@ class DancerCorners : public Dancer {
   public:
     int step;
 
+    CHSV color;
+
     void start();
+    void update();
     void onBeatStart(float duration);
     void onBarStart(float duration);
 };

@@ -1,13 +1,13 @@
 #ifndef Dancer_H
 #define Dancer_H
 
+#include "FastLED.h"
 #include <Arduino.h>
 #include "Joint.h"
-#include "Adafruit_NeoPixel.h"
 
 class Dancer {
   public:
-    Adafruit_NeoPixel *neoPixelStrip;
+    CRGB *neoPixels;
     Joint *FL1;
     Joint *FR1;
     Joint *BL1;
@@ -17,9 +17,8 @@ class Dancer {
     Joint *BL2;
     Joint *BR2;
 
-    // Dancer();
     void init(
-      Adafruit_NeoPixel& _strip,
+      CRGB neoPixels[],
       Joint& _FL1,
       Joint& _FR1,
       Joint& _BL1,
@@ -31,6 +30,7 @@ class Dancer {
     );
 
     virtual void start() {};
+    virtual void update() {};
     virtual void onBeatStart(float duration) {};
     virtual void onBarStart(float duration) {};
 

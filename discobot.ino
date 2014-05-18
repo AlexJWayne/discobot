@@ -1,5 +1,7 @@
 #include "FastLED.h"
-#include "Adafruit_NeoPixel.h"
+
+#include "Wire.h"
+#include "Servo.h"
 #include "Adafruit_PWMServoDriver.h"
 
 #include "Switch.h"
@@ -24,8 +26,9 @@ int inputMode = 0;
 Switch inputModeSwitch = Switch(inputSwitchPin);
 
 const int neoPixelPin = 40;
-const uint8_t neoPixelBrightness = 0x20;
-Adafruit_NeoPixel neoPixelStrip = Adafruit_NeoPixel(40, neoPixelPin, NEO_GRB + NEO_KHZ800);
+const int neoPixelBrightness = 0x10;
+const int neoPixelCount = 40;
+CRGB neoPixels[neoPixelCount];
 
 Adafruit_PWMServoDriver pwmDriver = Adafruit_PWMServoDriver();
 
@@ -44,11 +47,11 @@ Metronome metronome;
 
 Dancer *currentDancer;
 
-const int dancerCount = 4;
+const int dancerCount = 1;
 Dancer *dancers[] = {
-  new DancerPushups(),
-  new DancerHandup(),
-  new DancerThrusts(),
+  // new DancerPushups(),
+  // new DancerHandup(),
+  // new DancerThrusts(),
   new DancerCorners()
 };
 
@@ -64,9 +67,9 @@ void setup() {
   pwmDriver.setPWMFreq(60);
 
   // Initialize the NeoPixel matrix.
-  neoPixelStrip.begin();
-  neoPixelStrip.setBrightness(neoPixelBrightness);
-  neoPixelStrip.show();
+  FastLED.addLeds<NEOPIXEL, neoPixelPin, GRB>(neoPixels, neoPixelCount);
+  FastLED.setBrightness(neoPixelBrightness);
+  FastLED.show();
 
   // Set the onboard LED to output mode.
   pinMode(onBoardLedPin, OUTPUT);
@@ -83,7 +86,7 @@ void setup() {
 
   // Initializers all the dancers, giving them all a reference to each joint.
   for (int i = 0; i < dancerCount; i++) {
-    dancers[i]->init(neoPixelStrip, FL1, FL2, FR1, FR2, BR1, BR2, BL1, BL2);
+    dancers[i]->init(neoPixels, FL1, FL2, FR1, FR2, BR1, BR2, BL1, BL2);
   }
 
   // Set the first dancer randomly.
@@ -131,6 +134,8 @@ void updateJoints() {
     case 1:
       updateMetronome(); break;
   }
+
+  currentDancer->update();
 
   FL1.update(currentTime);
   FR1.update(currentTime);
