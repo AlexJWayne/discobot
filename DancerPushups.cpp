@@ -11,6 +11,14 @@ void DancerPushups::onBeatStart(float duration) {
   FR1->tween(45 - 25 * direction, duration);
   BL1->tween(45 - 25 * direction, duration);
   BR1->tween(45 + 25 * direction, duration);
+
+  // for (uint8_t x = 0; x < 8; x++) {
+  //   for (uint8_t y = 0; y < 5; y++) {
+  //     neoPixelStrip->setPixelColor(x + y*8, random(255), random(255), random(255));
+  //   }
+  // }
+
+  // neoPixelStrip->show();
 }
 
 void DancerPushups::onBarStart(float duration) {

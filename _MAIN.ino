@@ -3,14 +3,15 @@
 
 #include "Switch.h"
 
+#include "Metronome.h"
 #include "ReadSerialFloat.h"
 #include "Joint.h"
-#include "Dancer.h"
 
-#include "Metronome.h"
+#include "Dancer.h"
 #include "DancerPushups.h"
 #include "DancerHandup.h"
 #include "DancerThrusts.h"
+#include "DancerCorners.h"
 
 
 const int onBoardLedPin = 13;
@@ -20,8 +21,9 @@ const int inputSwitchPin = 44;
 int inputMode = 0;
 Switch inputModeSwitch = Switch(inputSwitchPin);
 
-// const int neoPixelPin = 40;
-// Adafruit_NeoPixel strip = Adafruit_NeoPixel(40, neoPixelPin, NEO_GRB + NEO_KHZ800);
+const int neoPixelPin = 40;
+const uint8_t neoPixelBrightness = 15;
+Adafruit_NeoPixel neoPixelStrip = Adafruit_NeoPixel(40, neoPixelPin, NEO_GRB + NEO_KHZ800);
 
 Adafruit_PWMServoDriver pwmDriver = Adafruit_PWMServoDriver();
 
@@ -40,11 +42,12 @@ Metronome metronome;
 
 Dancer *currentDancer;
 
-const int dancerCount = 3;
+const int dancerCount = 4;
 Dancer *dancers[] = {
   new DancerPushups(),
   new DancerHandup(),
   new DancerThrusts(),
+  new DancerCorners()
 };
 
 void setup() {
@@ -58,9 +61,10 @@ void setup() {
   pwmDriver.begin();
   pwmDriver.setPWMFreq(60);
 
-  // // Initialize the NeoPixel matrix.
-  // strip.begin();
-  // strip.show();
+  // Initialize the NeoPixel matrix.
+  neoPixelStrip.begin();
+  neoPixelStrip.setBrightness(neoPixelBrightness);
+  neoPixelStrip.show();
 
   // Set the onboard LED to output mode.
   pinMode(onBoardLedPin, OUTPUT);
@@ -77,7 +81,7 @@ void setup() {
 
   // Initializers all the dancers, giving them all a reference to each joint.
   for (int i = 0; i < dancerCount; i++) {
-    dancers[i]->init(FL1, FL2, FR1, FR2, BR1, BR2, BL1, BL2);
+    dancers[i]->init(neoPixelStrip, FL1, FL2, FR1, FR2, BR1, BR2, BL1, BL2);
   }
 
   // Set the first dancer randomly.
@@ -94,8 +98,6 @@ void loop() {
   changeInputMode();
 
   updateJoints();
-
-  // sinePixels();
 }
 
 void changeInputMode() {

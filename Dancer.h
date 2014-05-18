@@ -1,11 +1,13 @@
 #ifndef Dancer_H
 #define Dancer_H
 
-#include "Joint.h"
 #include <Arduino.h>
+#include "Joint.h"
+#include "Adafruit_NeoPixel.h"
 
 class Dancer {
   public:
+    Adafruit_NeoPixel *neoPixelStrip;
     Joint *FL1;
     Joint *FR1;
     Joint *BL1;
@@ -17,6 +19,7 @@ class Dancer {
 
     // Dancer();
     void init(
+      Adafruit_NeoPixel& _strip,
       Joint& _FL1,
       Joint& _FR1,
       Joint& _BL1,

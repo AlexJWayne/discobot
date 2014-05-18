@@ -1,6 +1,7 @@
 #include "Dancer.h"
 
 void Dancer::init(
+  Adafruit_NeoPixel& _strip,
   Joint& _FL1,
   Joint& _FL2,
   Joint& _FR1,
@@ -10,6 +11,7 @@ void Dancer::init(
   Joint& _BL1,
   Joint& _BL2
 ) {
+  neoPixelStrip = &_strip,
   FL1 = &_FL1;
   FL2 = &_FL2;
   FR1 = &_FR1;
