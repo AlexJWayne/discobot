@@ -111,7 +111,7 @@ void changeInputMode() {
     if (inputMode == 0) {
       inputMode = 1;
       FastLED.showColor(CRGB::Black);
-      
+
     } else {
       inputMode = 0;
 
@@ -173,10 +173,7 @@ void updateSerial() {
     // section
     duration = readSerialFloat();
     if (duration > 0) {
-      currentDancer = dancers[random(0, dancerCount)];
-      currentDancer->start();
-      // Serial.print("currentDancerIndex: ");
-      // Serial.println(currentDancerIndex);
+      switchDancer();
     }
   }
 }
@@ -193,11 +190,7 @@ void updateMetronome() {
   // Update dancers
 
   if (metronome.triggerSection()) {
-    currentDancer = dancers[random(0, dancerCount)];
-    currentDancer->start();
-
-    // Serial.print("currentDancerIndex: ");
-    // Serial.println(currentDancerIndex);
+    switchDancer();
   }
 
   if (metronome.triggerBeat()) {
@@ -211,43 +204,16 @@ void updateMetronome() {
   }
 }
 
-// void sinePixels() {
-//   float brightness = .5;
-//   float timeScale = 3.0;
-//   float time = (float)millis() / 1000.0;
-  
-//   float r, g, b;
+void switchDancer() {
+  int newIdx = random(0, dancerCount-1);
 
-//   for (uint8_t x = 0; x < 8; x++) {
-//     for (uint8_t y = 0; y < 5; y++) {
+  for (int i = 0; i < newIdx; i++) {
+    if (dancers[i] == currentDancer) {
+      newIdx++;
+      break;
+    }
+  }
 
-//       r = sin(x - time*timeScale*3.0) * 0.15 + 0.5;
-//       r = 1.0 - abs((float)y / 4.0 - r);
-//       r = pow(r, 3);
-
-//       g = sin(x + time*timeScale*2.1) * 0.2 + 0.5;
-//       g = 1.0 - abs((float)y / 4.0 - g);
-//       g = pow(g, 3);
-
-//       b = sin(x - time*timeScale*1.3) * 0.4 + 0.5;
-//       b = 1.0 - abs((float)y / 4.0 - b);
-//       b = pow(b, 3);
-
-//       setPixelColor(
-//         x, y,
-//         r * brightness,
-//         g * brightness,
-//         b * brightness
-//       );
-//     }
-//   }
-//   strip.show();
-// }
-
-// void setPixelColor(uint8_t x, uint8_t y, float r, float g, float b) {
-//   strip.setPixelColor(pixelId(x, y), (uint8_t)(r*255), (uint8_t)(g*255), (uint8_t)(b*255));
-// }
-
-// uint8_t pixelId(uint8_t x, uint8_t y) {
-//   return y * 8 + x;
-// }
+  currentDancer = dancers[newIdx];
+  currentDancer->start();
+}
