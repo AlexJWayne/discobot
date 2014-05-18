@@ -26,7 +26,7 @@ int inputMode = 0;
 Switch inputModeSwitch = Switch(inputSwitchPin);
 
 const int neoPixelPin = 40;
-const int neoPixelBrightness = 0x10;
+const int neoPixelBrightness = 0x20;
 const int neoPixelCount = 40;
 CRGB neoPixels[neoPixelCount];
 
