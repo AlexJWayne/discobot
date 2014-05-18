@@ -1,3 +1,4 @@
+#include "FastLED.h"
 #include "Adafruit_NeoPixel.h"
 #include "Adafruit_PWMServoDriver.h"
 
@@ -14,6 +15,7 @@
 #include "DancerCorners.h"
 
 
+
 const int onBoardLedPin = 13;
 const int bpmPotPin = 2;
 const int inputSwitchPin = 44;
@@ -22,7 +24,7 @@ int inputMode = 0;
 Switch inputModeSwitch = Switch(inputSwitchPin);
 
 const int neoPixelPin = 40;
-const uint8_t neoPixelBrightness = 15;
+const uint8_t neoPixelBrightness = 0x20;
 Adafruit_NeoPixel neoPixelStrip = Adafruit_NeoPixel(40, neoPixelPin, NEO_GRB + NEO_KHZ800);
 
 Adafruit_PWMServoDriver pwmDriver = Adafruit_PWMServoDriver();
