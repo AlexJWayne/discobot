@@ -47,11 +47,11 @@ Metronome metronome;
 
 Dancer *currentDancer;
 
-const int dancerCount = 1;
+const int dancerCount = 4;
 Dancer *dancers[] = {
-  // new DancerPushups(),
-  // new DancerHandup(),
-  // new DancerThrusts(),
+  new DancerPushups(),
+  new DancerHandup(),
+  new DancerThrusts(),
   new DancerCorners()
 };
 
@@ -110,6 +110,8 @@ void changeInputMode() {
   if (inputModeSwitch.pushed()) {
     if (inputMode == 0) {
       inputMode = 1;
+      FastLED.showColor(CRGB::Black);
+      
     } else {
       inputMode = 0;
 
