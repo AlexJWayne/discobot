@@ -1,30 +1,30 @@
 // PWM Controller Board dimensions
 pwmWidth = 26;
 pwmLength = 63;
-pwmScrewHoleInset = 3;
-pwmScrewHoleDiameter = 3;
+pwmScrewHoleInset = 3.2;
+pwmScrewHoleDiameter = 3.5;
 pwmClearance = 24;
 
 // NeoPixel Shield dimensions
-neoWidth = 54;
-neoLength = 69;
+neoWidth = 54.5;
+neoLength = 69.5;
 
 // cutouts
 cutoutWidth = 5;
-cutoutHeight = 12;
+cutoutHeight = 20;
 
 // center
-centerHoleDiameter = 5;
+centerHoleDiameter = 4;
 
 // Padding between cavity and outer edge
-wallWidth = 2;
+wallWidth = 1.5;
 
 
 // Go!
 difference() {
   union() {
-    shelves();
     walledEnclosure();
+    shelves();
   }
   pwmScrewHoles();
   cutouts();
@@ -83,7 +83,7 @@ module pwmScrewHoles() {
 
 module shelf() {
   rotate([82, 0, 0]) {
-    translate([wallWidth*2, pwmClearance*.65+wallWidth, .45]) {
+    translate([wallWidth*2, pwmClearance*.65+wallWidth, .4]) {
       cube([neoWidth - wallWidth*2, pwmClearance/3, 2]);
     };
   };
@@ -91,20 +91,18 @@ module shelf() {
 
 module shelves() {
   shelf();
-  translate([0, neoLength + 6 - wallWidth, 0])
+  translate([0, neoLength + wallWidth*2, 0])
     mirror([0,1,0])
       shelf();
 };
 
 module cutouts() {
-  for (i = [1:3]) {
-    translate([
-      -25,
-      i*neoWidth/3,
-      pwmClearance - cutoutHeight - wallWidth,
-    ]) {
-      cube([100, cutoutWidth, cutoutHeight]);
-    }
+  translate([
+    -25,
+    neoLength/2 - cutoutWidth/2 + wallWidth,
+    pwmClearance/4 + wallWidth,
+  ]) {
+    cube([100, cutoutWidth, cutoutHeight]);
   }
 }
 
@@ -121,10 +119,10 @@ module centerHole() {
     );
 
     translate([0,0, wallWidth-1])
-    cylinder(
-      h = 2,
-      d = centerHoleDiameter*1.5,
-      $fn = 40
-    );
+      cylinder(
+        h = 2,
+        d = centerHoleDiameter*2,
+        $fn = 40
+      );
   };
 }
