@@ -18,6 +18,8 @@ void DancerHandup::start() {
       hand1 = BR1; break;
   }
 
+  FastLED.showColor(CRGB::Red);
+
   setup();
 }
 

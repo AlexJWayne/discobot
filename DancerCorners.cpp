@@ -42,11 +42,9 @@ void DancerCorners::onBeatStart(float duration) {
   if (step >= 4) step = 0;
 }
 
-void DancerCorners::onBarStart(float duration) {
-  color.hue += 0x40;
-}
-
 void DancerCorners::update() {
+  color.hue++;
+
   if (color.v > 4) {
     color.v -= 4;
   } else {

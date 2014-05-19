@@ -11,7 +11,6 @@ class DancerCorners : public Dancer {
     void start();
     void update();
     void onBeatStart(float duration);
-    void onBarStart(float duration);
 };
 
 #endif

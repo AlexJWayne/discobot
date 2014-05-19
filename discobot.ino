@@ -110,10 +110,10 @@ void changeInputMode() {
   if (inputModeSwitch.pushed()) {
     if (inputMode == 0) {
       inputMode = 1;
-      FastLED.showColor(CRGB::Black);
 
     } else {
       inputMode = 0;
+      FastLED.showColor(CRGB::Black);
 
       FL1.tween(FL1.initialAngle, 0.25);
       FR1.tween(FR1.initialAngle, 0.25);

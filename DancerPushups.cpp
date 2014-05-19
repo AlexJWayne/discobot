@@ -5,6 +5,7 @@ DancerPushups::DancerPushups() {
 }
 
 void DancerPushups::onBeatStart(float duration) {
+  FastLED.showColor(CRGB::Green);
   direction *= -1;
 
   FL1->tween(45 + 25 * direction, duration);

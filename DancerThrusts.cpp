@@ -3,6 +3,7 @@
 void DancerThrusts::start() {
   orientation = (random(0, 2) == 0);
   direction = (random(0, 2) == 0 ? 1 : -1);
+  FastLED.showColor(CRGB::Blue);
 }
 
 void DancerThrusts::onBeatStart(float duration) {
