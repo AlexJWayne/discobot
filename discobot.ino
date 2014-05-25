@@ -21,12 +21,15 @@
 const int onBoardLedPin = 13;
 const int bpmPotPin = 2;
 const int inputSwitchPin = 44;
+const int dancerSwitchPin = 46;
 
 int inputMode = 0;
 Switch inputModeSwitch = Switch(inputSwitchPin);
 
+Switch dancerSwitch = Switch(dancerSwitchPin);
+
 const int neoPixelPin = 40;
-const int neoPixelBrightness = 0x20;
+const int neoPixelBrightness = 0x80;
 const int neoPixelCount = 40;
 CRGB neoPixels[neoPixelCount];
 
@@ -52,7 +55,7 @@ Dancer *dancers[] = {
   new DancerPushups(),
   new DancerHandup(),
   new DancerThrusts(),
-  new DancerCorners()
+  new DancerCorners(),
 };
 
 void setup() {
@@ -75,14 +78,14 @@ void setup() {
   pinMode(onBoardLedPin, OUTPUT);
 
   // Initialize all the joints.
-  FL1.init(pwmDriver, 0,  10,  1, 30);
-  FL2.init(pwmDriver, 1,   6, -1, 80);
-  FR1.init(pwmDriver, 2, -10, -1, 30);
-  FR2.init(pwmDriver, 3,  17,  1, 80);
-  BR1.init(pwmDriver, 4,   7,  1, 30);
-  BR2.init(pwmDriver, 5, -10, -1, 80);
-  BL1.init(pwmDriver, 6,   3, -1, 30);
-  BL2.init(pwmDriver, 7,  -4,  1, 80);
+  FL1.init(pwmDriver, 0,   10,  1, 30);
+  FL2.init(pwmDriver, 1,    6, -1, 90);
+  FR1.init(pwmDriver, 2,  -10, -1, 30);
+  FR2.init(pwmDriver, 3,   25,  1, 90);
+  BR1.init(pwmDriver, 12,   7,  1, 30);
+  BR2.init(pwmDriver, 13, -10, -1, 90);
+  BL1.init(pwmDriver, 14,   3, -1, 30);
+  BL2.init(pwmDriver, 15,   0,  1, 90);
 
   // Initializers all the dancers, giving them all a reference to each joint.
   for (int i = 0; i < dancerCount; i++) {
@@ -107,6 +110,8 @@ void loop() {
 
 void changeInputMode() {
   inputModeSwitch.poll();
+  dancerSwitch.poll();
+
   if (inputModeSwitch.pushed()) {
     if (inputMode == 0) {
       inputMode = 1;
@@ -124,6 +129,10 @@ void changeInputMode() {
       BL2.tween(BL2.initialAngle, 0.25);
       BR2.tween(BR2.initialAngle, 0.25);
     }
+  }
+
+  if (dancerSwitch.pushed()) {
+    switchDancer();
   }
 
   digitalWrite(onBoardLedPin, inputMode == 0 ? LOW : HIGH);
@@ -205,15 +214,7 @@ void updateMetronome() {
 }
 
 void switchDancer() {
-  int newIdx = random(0, dancerCount-1);
-
-  for (int i = 0; i < newIdx; i++) {
-    if (dancers[i] == currentDancer) {
-      newIdx++;
-      break;
-    }
-  }
-
+  int newIdx = random(0, dancerCount);
   currentDancer = dancers[newIdx];
   currentDancer->start();
 }

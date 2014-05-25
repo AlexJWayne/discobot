@@ -6,6 +6,10 @@ void DancerThrusts::start() {
   FastLED.showColor(CRGB::Blue);
 }
 
+void DancerThrusts::update() {
+
+}
+
 void DancerThrusts::onBeatStart(float duration) {
   direction *= -1;
   float FL1angle = 45 + 15 * direction;

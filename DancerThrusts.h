@@ -8,6 +8,7 @@ class DancerThrusts : public Dancer {
     bool orientation;
 
     void start();
+    void update();
     void onBeatStart(float duration);
     void onBarStart(float duration);
 };

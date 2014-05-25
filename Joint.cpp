@@ -67,6 +67,6 @@ void Joint::move(float angle) {
   currentAngle = angle;
   
   float absAngle = 90 + offset + currentAngle * direction;
-  float pulseLen = map(absAngle, 0, 180, SERVOMIN, SERVOMAX);
+  uint16_t pulseLen = map(absAngle, 0, 180, SERVOMIN, SERVOMAX);
   pwmDriver->setPWM(pin, 0, pulseLen);
 }

@@ -3,18 +3,20 @@ pwmWidth = 26;
 pwmLength = 63;
 pwmScrewHoleInset = 3.2;
 pwmScrewHoleDiameter = 3.5;
-pwmClearance = 24;
+pwmClearance = 25;
+
 
 // NeoPixel Shield dimensions
 neoWidth = 54.5;
-neoLength = 69.5;
+neoLength = 70;
+neoClearance = 15;
 
 // cutouts
-cutoutWidth = 5;
-cutoutHeight = 20;
+cutoutWidth = 4;
+cutoutHeight = neoLength - 25;
 
 // center
-centerHoleDiameter = 4;
+centerHoleDiameter = 5;
 
 // Padding between cavity and outer edge
 wallWidth = 1.5;
@@ -25,12 +27,13 @@ difference() {
   union() {
     walledEnclosure();
     shelves();
+    shelf2();
   }
   pwmScrewHoles();
   cutouts();
   centerHole();
+  topSlice();
 };
-
 
 module walledEnclosure() {
   difference(){
@@ -38,7 +41,7 @@ module walledEnclosure() {
     cube([
       neoWidth + wallWidth*2,
       neoLength + wallWidth*2,
-      pwmClearance + wallWidth*2
+      pwmClearance + neoClearance + wallWidth*2
     ]);
 
     // Hollow center
@@ -82,10 +85,12 @@ module pwmScrewHoles() {
 };
 
 module shelf() {
-  rotate([82, 0, 0]) {
-    translate([wallWidth*2, pwmClearance*.65+wallWidth, .4]) {
-      cube([neoWidth - wallWidth*2, pwmClearance/3, 2]);
-    };
+  translate([
+    wallWidth,
+    wallWidth,
+    .4
+  ]) {
+    cube([neoWidth, wallWidth, pwmClearance]);
   };
 };
 
@@ -97,12 +102,14 @@ module shelves() {
 };
 
 module cutouts() {
-  translate([
-    -25,
-    neoLength/2 - cutoutWidth/2 + wallWidth,
-    pwmClearance/4 + wallWidth,
-  ]) {
-    cube([100, cutoutWidth, cutoutHeight]);
+  for (c = [.1, .9]) {
+    translate([
+      wallWidth + neoWidth*c - cutoutWidth/2,
+      wallWidth + neoLength/2 - cutoutHeight/2,
+      -10,
+    ]) {
+      cube([cutoutWidth, cutoutHeight, 100]);
+    }
   }
 }
 
@@ -126,3 +133,20 @@ module centerHole() {
       );
   };
 }
+
+module shelf2() {
+  for (z = [1.5, -1]) {
+    for (y = [wallWidth/3-.4, neoWidth+wallWidth/3]) {
+      translate([y, wallWidth, pwmClearance + neoClearance + z]) {
+        rotate([0, 45, 0]) {
+          cube([1.75, neoLength, 1.75]);
+        };
+      };
+    };
+  };
+};
+
+module topSlice() {
+  translate([-20, -20, pwmClearance + neoClearance + 1.6])
+    cube([100, 100, 10]);
+};
