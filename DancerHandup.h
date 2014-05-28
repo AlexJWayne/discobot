@@ -19,7 +19,12 @@ class DancerHandup : public Dancer {
     int beatCount;
     int barCount;
 
+    uint8_t hue;
+    long msAtBeatStart;
+    long msAtBeatEnd;
+
     void start();
+    void update();
     void onBeatStart(float duration);
     void onBarStart(float duration);
 

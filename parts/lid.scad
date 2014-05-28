@@ -6,8 +6,8 @@ pwmScrewHoleDiameter = 3.5;
 pwmClearance = 24;
 
 // NeoPixel Shield dimensions
-neoWidth = 54.5;
-neoLength = 69.5;
+neoWidth = 54;
+neoLength = 69;
 
 // cutouts
 cutoutWidth = 5;

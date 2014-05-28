@@ -6,6 +6,7 @@ void DancerHandup::start() {
   handRight = true;
   beatCount = 0;
   barCount  = 0;
+  hue       = random8();
 
   switch (random(0, 4)) {
     case 0:
@@ -18,14 +19,47 @@ void DancerHandup::start() {
       hand1 = BR1; break;
   }
 
-  FastLED.showColor(CRGB::Red);
-
   setup();
+}
+
+void DancerHandup::update() {
+  CHSV pxColor;
+  int targX = 7;
+  int targY = 4;
+
+  long now = millis();
+  now = constrain(now, msAtBeatStart, msAtBeatEnd);
+  uint8_t completion8 = map(now, msAtBeatStart, msAtBeatEnd, 0, 0xFF);
+  if (bounceUp) completion8 = 0xFF - completion8;
+
+  if (hand1 == FR1 || hand1 == FL1) targX = 0;
+  if (hand1 == FR1 || hand1 == BR1) targY = 0;
+
+  for (uint8_t y = 0; y < 5; y++) {
+    for (uint8_t x = 0; x < 8; x++) {
+      uint8_t x2 = abs(targX - x);
+      uint8_t y2 = abs(targY - y);
+
+      pxColor.s = 0xFF;
+      pxColor.v = dim8_raw(constrain(0xFF/6 * y2, 0, 0xFF));
+      pxColor.v = qadd8(pxColor.v, dim8_raw(constrain(0xFF/6 * x2, 0, 0xFF)));
+      pxColor.v = dim8_raw(pxColor.v);
+      pxColor.v = scale8(pxColor.v, completion8);
+      pxColor.h = hue + scale8(pxColor.v, 0x80);
+
+      neoPixels[x + y*8] = pxColor;
+    }
+  }
+
+  FastLED.show();
 }
 
 void DancerHandup::onBeatStart(float duration) {
   beatCount++;
   bounceUp = !bounceUp;
+  msAtBeatStart = millis();
+  msAtBeatEnd = msAtBeatStart + duration * 1000;
+  hue += 0x10;
 
   float dir = bounceUp ? 1 : 0;
 
