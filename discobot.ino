@@ -78,14 +78,14 @@ void setup() {
   pinMode(onBoardLedPin, OUTPUT);
 
   // Initialize all the joints.
-  FL1.init(pwmDriver, 0,   10,  1, 30);
-  FL2.init(pwmDriver, 1,    6, -1, 90);
-  FR1.init(pwmDriver, 2,  -10, -1, 30);
-  FR2.init(pwmDriver, 3,   25,  1, 90);
-  BR1.init(pwmDriver, 12,   7,  1, 30);
-  BR2.init(pwmDriver, 13, -10, -1, 90);
-  BL1.init(pwmDriver, 14,   3, -1, 30);
-  BL2.init(pwmDriver, 15,   0,  1, 90);
+  BL1.init(pwmDriver, 0,   15, -1, 30);
+  BL2.init(pwmDriver, 1,  -11,  1, 85);
+  FL1.init(pwmDriver, 2,    0,  1, 30);
+  FL2.init(pwmDriver, 3,    4, -1, 85);
+  FR1.init(pwmDriver, 12,   6, -1, 30);
+  FR2.init(pwmDriver, 13, -10,  1, 85);
+  BR1.init(pwmDriver, 14,  13,  1, 30);
+  BR2.init(pwmDriver, 15,   0, -1, 85);
 
   // Initializers all the dancers, giving them all a reference to each joint.
   for (int i = 0; i < dancerCount; i++) {
@@ -99,6 +99,10 @@ void setup() {
   // start ticking the internal metronome at 90 bpm.
   metronome.start(90);
 }
+
+// void loop() {
+//   FL1.move(0);
+// }
 
 void loop() {
   currentTime = (float)millis() / 1000.0;

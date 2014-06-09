@@ -22,21 +22,21 @@ horn_rdist = 13;
 // uncomment for tower pro servo
 servo_length = 23.5;
 servo_width = 12.5;
-servo_tall = 27;
+servo_tall = 29;
 servo_clear = 7;  
 horn_radius1 = 3.6;
 horn_radius2 = 1.75;
-horn_rdist = 15;
+horn_rdist = 17;
 
 
 /* individual parts (for export) - uncomment one line at a time */
 //backbone(bb_length,bb_width,bb_height,servo_length,servo_width);
 //hip(servo_length,servo_width);
 //leg(servo_length,servo_width);
-//shoulder(servo_tall,servo_clear,horn_radius1,horn_radius2,horn_rdist);
+shoulder(servo_tall,servo_clear,horn_radius1,horn_radius2,horn_rdist);
 //servo_button();
 
-show_full_assembly=1;
+show_full_assembly=0;
 h_pos = (bb_length-20)/2;	
 
 
