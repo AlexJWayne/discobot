@@ -100,10 +100,6 @@ void setup() {
   metronome.start(90);
 }
 
-// void loop() {
-//   FL1.move(0);
-// }
-
 void loop() {
   currentTime = (float)millis() / 1000.0;
 
